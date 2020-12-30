@@ -3,9 +3,9 @@
 <!-- Author: Sreejith S -->
 <!-- Tue 29 Dec 2020 21:35:37 IST -->
 
-<robot name="omnibot">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="omnibot">
 
-    <!--Materials color predefined-->
+  <!--Materials color predefined-->
   <material name="black">
     <color rgba="0.0 0.0 0.0 1.0"/>
   </material>
@@ -22,6 +22,60 @@
     <color rgba="1.0 1.0 1.0 1.0"/>
   </material>
 
+  <!-- Constants -->
+  <xacro:property name="base_rad" value="0.08" />
+  <xacro:property name="base_thickness" value="0.035" />
+  <xacro:property name="wheel_rad" value="0.029" />
+  <xacro:property name="wheel_thickness" value="0.026" />
+
+    <!-- Macro -->
+  <xacro:macro name="omni_wheel" params="name z_offset">
+    <link name="${name}">
+      <visual>
+        <origin rpy="0 ${pi} 0" xyz="0 0 ${z_offset}"/>
+        <geometry>
+          <cylinder radius="${wheel_rad}" length="${wheel_thickness}" />
+          <!-- <mesh filename="package://omnibot_description/meshes/wheel.STL"/> -->
+        </geometry>
+        <material name="green"/>
+      </visual>
+    </link>
+  </xacro:macro>
+
+  <xacro:macro name="wheel_joint" params="wheel alpha yaw offset">
+    <joint name="base_link_to_${wheel}" type="continuous">
+      <origin rpy="${radians(90)} 0 ${radians(yaw)}"
+              xyz="${base_rad*cos(radians(alpha))} ${base_rad*sin(radians(alpha))} ${offset}"/>
+      <axis xyz="0 0 1"/>
+      <parent link="base_link"/>
+      <child link="${wheel}"/>
+    </joint>
+  </xacro:macro>
+
+
+  <!-- <joint name="base_link_to_right_wheel" type="continuous">            -->
+  <!--   <origin rpy="1.5707963 0 -1.0471976" xyz="0.069282 0.040 -0.020"/> -->
+  <!--   <axis xyz="0 0 1 "/>                                               -->
+  <!--   <parent link="base_link"/>                                         -->
+  <!--   <child link="right_wheel"/>                                        -->
+  <!-- </joint>                                                             -->
+
+  <!-- <joint name="base_link_to_left_wheel" type="continuous">             -->
+  <!--   <origin rpy="1.5707963 0 1.0471976" xyz="-0.069282 0.040 -0.020"/> -->
+  <!--   <axis xyz="0 0 1"/>                                                -->
+  <!--   <parent link="base_link"/>                                         -->
+  <!--   <child link="left_wheel"/>                                         -->
+  <!-- </joint>                                                             -->
+
+  <!-- <joint name="base_link_to_back_wheel" type="continuous">             -->
+  <!--   <origin rpy="-1.5707963 0 0" xyz="0.0 -0.08 -0.02"/>               -->
+  <!--   <axis xyz="0 0 1"/>                                                -->
+  <!--   <parent link="base_link"/>                                         -->
+  <!--   <child link="back_wheel"/>                                         -->
+  <!-- </joint>                                                             -->
+
+
+  <!-- Links -->
   <link name="base_footprint">
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -40,64 +94,22 @@
   </link>
 
 
-
-    <!-- TODO: To Xacro -->
-    <link name="right_wheel">
-        <visual>
-            <origin rpy="0 0 0" xyz="0 0 -0.012"/>
-            <geometry>
-                <cylinder radius="0.029" length="0.026"/>
-            </geometry>
-            <material name="green"/>
-        </visual>
-    </link>
-
-    <link name="left_wheel">
-        <visual>
-            <origin rpy="0 0 0" xyz="0 0 -0.012"/>
-            <geometry>
-                <cylinder radius="0.029" length="0.026"/>
-            </geometry>
-            <material name="green"/>
-        </visual>
-    </link>
-
-    <link name="back_wheel">
-        <visual>
-            <origin rpy="0 0 0" xyz="0 0 -0.012"/>
-            <geometry>
-                <cylinder radius="0.029" length="0.026"/>
-            </geometry>
-            <material name="green"/>
-        </visual>
-    </link>
-
-    <joint name="base_foorprint_to_base_link" type="fixed">
-        <origin xyz="0 0 0.041"/>
-        <parent link="base_footprint"/>
-        <child link="base_link"/>
-    </joint>
+  <xacro:omni_wheel name="right_wheel" z_offset="0.013" />
+  <xacro:omni_wheel name="left_wheel" z_offset="0.013" />
+  <xacro:omni_wheel name="back_wheel" z_offset="0.013" />
 
 
-    <joint name="base_link_to_right_wheel" type="continuous">
-        <origin rpy="1.5707963 0 -1.0471976" xyz="0.069282 0.040 -0.020"/>
-        <axis xyz="0 0 1 "/>
-        <parent link="base_link"/>
-        <child link="right_wheel"/>
-    </joint>
+    <!-- Joints -->
+  <joint name="base_footprint_to_base_link" type="fixed">
+    <origin xyz="0 0 0.041"/>
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+  </joint>
 
-    <joint name="base_link_to_left_wheel" type="continuous">
-        <origin rpy="1.5707963 0 1.0471976" xyz="-0.069282 0.040 -0.020"/>
-        <axis xyz="0 0 1"/>
-        <parent link="base_link"/>
-        <child link="left_wheel"/>
-    </joint>
+  <xacro:wheel_joint wheel="right_wheel" alpha="30" yaw="120" offset="-0.02" />
+  <xacro:wheel_joint wheel="left_wheel" alpha="150" yaw="240" offset="-0.02" />
+  <xacro:wheel_joint wheel="back_wheel" alpha="270" yaw="0" offset="-0.02" />
 
-    <joint name="base_link_to_back_wheel" type="continuous">
-        <origin rpy="-1.5707963 0 0" xyz="0.0 -0.08 -0.02"/>
-        <axis xyz="0 0 1"/>
-        <parent link="base_link"/>
-        <child link="back_wheel"/>
-    </joint>
+
 
 </robot>
