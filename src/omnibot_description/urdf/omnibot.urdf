@@ -35,7 +35,7 @@
         <origin rpy="0 ${pi} 0" xyz="0 0 ${z_offset}"/>
         <geometry>
           <cylinder radius="${wheel_rad}" length="${wheel_thickness}" />
-          <!-- <mesh filename="package://omnibot_description/meshes/wheel.STL"/> -->
+          <!-- <mesh filename="package://omnibot_description/meshes/omniwheel.dae"/> -->
         </geometry>
         <material name="green"/>
       </visual>
